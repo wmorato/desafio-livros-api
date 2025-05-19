@@ -1,8 +1,14 @@
 package com.exemplo.backend.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import jakarta.persistence.*;
+import java.util.List;
 
 @Entity
+@Getter
+@Setter
 public class Livro {
 
     @Id
@@ -19,5 +25,4 @@ public class Livro {
     @JoinColumn(name = "genero_id", nullable = false)
     private Genero genero;
 
-    // Getters e setters
 }

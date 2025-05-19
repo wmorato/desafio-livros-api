@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Login v-if="!autenticado" @login-sucesso="autenticado = true" />
+    <Login v-if="!autenticado" @login-sucesso="aoLogar" />
     <div v-else>
       <LivroForm @livro-cadastrado="buscarLivros" />
       <LivroList :livros="livros" @livroRemovido="buscarLivros" />
@@ -31,6 +31,10 @@ export default {
     async buscarLivros() {
       const response = await api.get('/livros');
       this.livros = response.data;
+    },
+    aoLogar() {
+      this.autenticado = true;
+      this.buscarLivros();
     }
   },
   mounted() {

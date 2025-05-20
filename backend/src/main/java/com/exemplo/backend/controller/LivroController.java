@@ -58,4 +58,32 @@ public class LivroController {
     public void deletar(@PathVariable Long id) {
         livroService.deletar(id);
     }
+
+    @PutMapping("/{id}")
+public LivroResponseDTO atualizar(@PathVariable Long id, @RequestBody LivroDTO dto) {
+    Livro livro = livroService.buscarPorId(id)
+        .orElseThrow(() -> new RuntimeException("Livro não encontrado"));
+
+    livro.setTitulo(dto.titulo);
+
+    Autor autor = autorService.buscarPorId(dto.autorId)
+        .orElseThrow(() -> new RuntimeException("Autor não encontrado"));
+    Genero genero = generoService.buscarPorId(dto.generoId)
+        .orElseThrow(() -> new RuntimeException("Gênero não encontrado"));
+
+    livro.setAutor(autor);
+    livro.setGenero(genero);
+
+    Livro atualizado = livroService.salvar(livro);
+
+    LivroResponseDTO response = new LivroResponseDTO();
+    response.id = atualizado.getId();
+    response.titulo = atualizado.getTitulo();
+    response.autor = atualizado.getAutor().getNome();
+    response.genero = atualizado.getGenero().getNome();
+    response.autorId = atualizado.getAutor().getId();
+    response.generoId = atualizado.getGenero().getId();
+    return response;
+}
+
 }

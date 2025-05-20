@@ -1,10 +1,10 @@
 <template>
     <div class="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
       <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-        <span>👤</span> Lista de generoes
+        <span>👤</span> Lista de generos
       </h2>
       <div
-        v-for="genero in generoes"
+        v-for="genero in generos"
         :key="genero.id"
         class="mb-3 flex items-center gap-3 border-b pb-2"
       >
@@ -28,7 +28,7 @@
   <script>
   export default {
     props: {
-      generoes: Array,
+      generos: Array,
     },
   };
   </script>

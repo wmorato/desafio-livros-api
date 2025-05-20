@@ -1,78 +1,56 @@
 <template>
-    <div class="bg-white rounded-lg shadow p-6 mb-6 max-w-md mx-auto">
-      <h2 class="text-xl font-bold mb-4">
-        {{ generoEdicao.id ? "Editar genero" : "Novo genero" }}
-      </h2>
-      <form @submit.prevent="salvargenero" class="space-y-3">
-        <input
-          v-model="generoEdicao.nome"
-          placeholder="Nome do genero"
-          class="border px-2 py-1 w-full"
-          required
-        />
-        <div class="flex gap-3">
-          <button type="submit" class="bg-green-600 text-white px-4 py-1 rounded">
-            Salvar
-          </button>
-          <button
-            type="button"
-            @click="$emit('cancelar')"
-            class="bg-gray-300 px-4 py-1 rounded"
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
-  </template>
-  
-  <script>
-  import api from '@/services/api';
-  
-  export default {
-    props: {
-      generoEditar: Object,
-    },
-    data() {
-      return {
-        generoEdicao: {
-          id: null,
-          nome: '',
-        },
+  <div class="p-8 max-w-xl mx-auto rounded-xl bg-white shadow">
+    <button @click="voltar" class="mb-6 px-4 py-2 rounded bg-gray-100 hover:bg-gray-200">← Voltar</button>
+    <h2 class="text-2xl font-bold mb-6 text-center">{{ isEdicao ? "Editar Gênero" : "Novo Gênero" }}</h2>
+    <form @submit.prevent="salvarGenero" class="space-y-4">
+      <input v-model="genero.nome" placeholder="Nome do gênero" class="w-full px-4 py-2 border rounded" required />
+      <div class="flex gap-4 justify-center">
+        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+          {{ isEdicao ? "Salvar Alterações" : "Cadastrar" }}
+        </button>
+        <button type="button" @click="voltar" class="bg-gray-400 text-white px-6 py-2 rounded hover:bg-gray-500">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</template>
+
+<script>
+import api from '@/services/api';
+export default {
+  name: "GeneroForm",
+  props: ["id"],
+  data() {
+    return {
+      genero: {
+        nome: ""
+      },
+      isEdicao: false
+    }
+  },
+  async mounted() {
+    if (this.$route.params.id) {
+      // Editando: buscar gênero pelo id
+      const response = await api.get(`/generos/${this.$route.params.id}`);
+      this.genero = {
+        nome: response.data.nome
       };
+      this.isEdicao = true;
+    }
+  },
+  methods: {
+    async salvarGenero() {
+      if (this.isEdicao) {
+        await api.put(`/generos/${this.$route.params.id}`, this.genero);
+      } else {
+        await api.post("/generos", this.genero);
+      }
+      this.voltar();
     },
-    watch: {
-      generoEditar: {
-        immediate: true,
-        handler(novo) {
-          if (novo) {
-            this.generoEdicao = {
-              id: novo.id || null,
-              nome: novo.nome || '',
-            };
-          } else {
-            this.generoEdicao = {
-              id: null,
-              nome: '',
-            };
-          }
-        },
-      },
-    },
-    methods: {
-      async salvargenero() {
-        if (this.generoEdicao.id) {
-          await api.put(`/generoes/${this.generoEdicao.id}`, {
-            nome: this.generoEdicao.nome,
-          });
-        } else {
-          await api.post('/generoes', {
-            nome: this.generoEdicao.nome,
-          });
-        }
-        this.$emit('genero-salvo');
-      },
-    },
-  };
-  </script>
-  
+    voltar() {
+      this.$router.push('/generos/crud');
+    }
+  }
+}
+</script>

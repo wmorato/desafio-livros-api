@@ -1,123 +1,77 @@
 <template>
-  <div class="bg-white rounded-lg shadow p-6 mb-6 max-w-md mx-auto">
-    <h2 class="text-xl font-bold mb-4">
-      {{ livroEdicao.id ? "Editar Livro" : "Novo Livro" }}
-    </h2>
-    <form @submit.prevent="salvarLivro" class="space-y-3">
-      <input
-        v-model="livroEdicao.titulo"
-        placeholder="Título do Livro"
-        class="border px-2 py-1 w-full"
-        required
-      />
-      <select
-        v-model="livroEdicao.autorId"
-        class="border px-2 py-1 w-full"
-        required
-      >
-        <option value="">Selecione o Autor</option>
-        <option v-for="autor in autores" :key="autor.id" :value="autor.id">
-          {{ autor.nome }}
-        </option>
+  <div class="p-8 max-w-xl mx-auto rounded-xl bg-white shadow">
+    <button @click="$router.push('/livros/crud')" class="mb-6 px-4 py-2 rounded bg-gray-100 hover:bg-gray-200">← Voltar</button>
+    <h2 class="text-2xl font-bold mb-6 text-center">{{ isEdicao ? "Editar Livro" : "Novo Livro" }}</h2>
+    <form @submit.prevent="salvarLivro" class="space-y-4">
+      <input v-model="livro.titulo" placeholder="Título" class="w-full px-4 py-2 border rounded" required />
+
+      <select v-model="livro.autorId" class="w-full px-4 py-2 border rounded" required>
+        <option value="">Selecione o autor</option>
+        <option v-for="autor in autores" :value="autor.id" :key="autor.id">{{ autor.nome }}</option>
       </select>
-      <select
-        v-model="livroEdicao.generoId"
-        class="border px-2 py-1 w-full"
-        required
-      >
-        <option value="">Selecione o Gênero</option>
-        <option v-for="genero in generos" :key="genero.id" :value="genero.id">
-          {{ genero.nome }}
-        </option>
+
+      <select v-model="livro.generoId" class="w-full px-4 py-2 border rounded" required>
+        <option value="">Selecione o gênero</option>
+        <option v-for="genero in generos" :value="genero.id" :key="genero.id">{{ genero.nome }}</option>
       </select>
-      <div class="flex gap-3">
-        <button type="submit" class="bg-green-600 text-white px-4 py-1 rounded">
-          Salvar
-        </button>
-        <button
-          type="button"
-          @click="$emit('cancelar')"
-          class="bg-gray-300 px-4 py-1 rounded"
-        >
-          Cancelar
-        </button>
-      </div>
+
+      <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
+        {{ isEdicao ? "Salvar Alterações" : "Cadastrar" }}
+      </button>
     </form>
   </div>
 </template>
 
 <script>
 import api from '@/services/api';
-
 export default {
-  props: {
-    livroEditar: Object,
-  },
+  name: "LivroForm",
+  props: ["id"],
   data() {
     return {
-      livroEdicao: {
-        id: null,
-        titulo: '',
-        autorId: '',
-        generoId: '',
+      livro: {
+        titulo: "",
+        autorId: "",
+        generoId: ""
       },
+      isEdicao: false,
       autores: [],
-      generos: [],
-    };
+      generos: []
+    }
   },
-  watch: {
-    livroEditar: {
-      immediate: true,
-      handler(novo) {
-        if (novo) {
-          this.livroEdicao = {
-            id: novo.id || null,
-            titulo: novo.titulo || '',
-            autorId: novo.autorId || '',
-            generoId: novo.generoId || '',
-          };
-        } else {
-          this.livroEdicao = {
-            id: null,
-            titulo: '',
-            autorId: '',
-            generoId: '',
-          };
-        }
-      },
-    },
-  },
-  mounted() {
-    this.carregarAutores();
-    this.carregarGeneros();
+  async mounted() {
+    // Buscar autores e gêneros para os selects
+    const [autoresResp, generosResp] = await Promise.all([
+      api.get('/autores'),
+      api.get('/generos')
+    ]);
+    this.autores = autoresResp.data;
+    this.generos = generosResp.data;
+
+    // Se edição, buscar dados do livro
+    if (this.$route.params.id) {
+      const response = await api.get(`/livros/${this.$route.params.id}`);
+      this.livro = {
+        titulo: response.data.titulo,
+        autorId: response.data.autorId,
+        generoId: response.data.generoId
+      };
+      this.isEdicao = true;
+    }
   },
   methods: {
-    async carregarAutores() {
-      const { data } = await api.get('/autores');
-      this.autores = data;
-    },
-    async carregarGeneros() {
-      const { data } = await api.get('/generos');
-      this.generos = data;
-    },
     async salvarLivro() {
-      if (this.livroEdicao.id) {
-        // Atualização
-        await api.put(`/livros/${this.livroEdicao.id}`, {
-          titulo: this.livroEdicao.titulo,
-          autorId: this.livroEdicao.autorId,
-          generoId: this.livroEdicao.generoId,
-        });
-      } else {
-        // Criação
-        await api.post('/livros', {
-          titulo: this.livroEdicao.titulo,
-          autorId: this.livroEdicao.autorId,
-          generoId: this.livroEdicao.generoId,
-        });
+      if (!this.livro.autorId || !this.livro.generoId) {
+        alert('Selecione o autor e o gênero!');
+        return;
       }
-      this.$emit('livro-salvo');
-    },
-  },
-};
+      if (this.isEdicao) {
+        await api.put(`/livros/${this.$route.params.id}`, this.livro);
+      } else {
+        await api.post("/livros", this.livro);
+      }
+      this.$router.push('/livros/crud');
+    }
+  }
+}
 </script>

@@ -8,9 +8,9 @@ import UsuarioCrud from '../views/usuarios/UsuarioCrud.vue'
 const routes = [
   { path: '/', component: Home },
   { path: '/login', component: Login },
-  { path: '/livros/crud', component: LivroCrud },
-  { path: '/livros/lista', component: LivroList },
-  { path: '/usuarios/crud', component: UsuarioCrud }
+ // { path: '/livros/crud', component: LivroCrud },
+ // { path: '/livros/lista', component: LivroList },
+  //{ path: '/usuarios/crud', component: UsuarioCrud }
 ]
 
 const router = createRouter({

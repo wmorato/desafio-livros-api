@@ -7,6 +7,15 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Map;
+import com.exemplo.backend.dto.UserDTO;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import java.util.stream.Collectors;
+import com.exemplo.backend.dto.UserDTO;
+import com.exemplo.backend.auth.AuthResponse;
 
 @RestController
 @RequestMapping("/auth")
@@ -22,18 +31,37 @@ public class AuthController {
     private InMemoryUserDetailsManager userDetailsManager;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-        try {
-            authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
-            );
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(401).body("Usuário ou senha inválidos");
-        }
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        // Autentica o usuário
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
-        final UserDetails user = userDetailsManager.loadUserByUsername(request.getUsername());
-        final String token = jwtUtil.generateToken(user.getUsername());
+        // Pegue username e roles
+        String username = authentication.getName();
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new AuthResponse(token));
+        // Gere o token JWT
+        String token = jwtUtil.generateToken(username, roles);
+
+        // Monte o DTO do usuário
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUsername(username);
+        userDTO.setRoles(roles);
+
+        // Monte a resposta
+        AuthResponse resp = new AuthResponse();
+        resp.setToken(token);
+        resp.setUser(userDTO);
+
+        return ResponseEntity.ok(resp);
     }
+
+    @PostMapping("/leitor")
+    public ResponseEntity<?> loginLeitor() {
+        String token = jwtUtil.generateToken("leitor", List.of("ROLE_LEITOR"));
+        return ResponseEntity.ok(Map.of("token", token));
+    }
+
 }

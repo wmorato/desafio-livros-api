@@ -43,14 +43,14 @@ export default {
         });
 
         const token = response.data.token;
-        const user = response.data.user; // se existir
+        const user = response.data.user;
 
         localStorage.setItem('token', token);
-        if (user) localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('user', JSON.stringify(user));
 
-        // Solução 1: reload (para garantir guard reativo)
+        // Redireciona para a página Home
+        //this.$router.push('/');
         window.location.href = '/';
-        // Ou teste a Solução 1 acima com nextTick.
       } catch (error) {
         this.erro = 'Usuário ou senha inválidos';
       }
@@ -63,7 +63,7 @@ export default {
         const user = response.data.user; // garanta que o backend retorne esse campo
 
         localStorage.setItem('token', token);
-        if (user) localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('user', JSON.stringify(user));
 
         // Recomendo manter o padrão, forçando reload para o guard funcionar igual
         window.location.href = '/';

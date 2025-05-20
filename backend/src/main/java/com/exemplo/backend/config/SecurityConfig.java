@@ -34,55 +34,47 @@ public class SecurityConfig {
         UserDetails user =
             User.withUsername("admin")
                 .password("{noop}123456")
-                .roles("USER")
+                .roles("USER", "ADMIN")
                 .build();
 
         return new InMemoryUserDetailsManager(user);
     }
 
-    @Bean
+@Bean
 public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
     return http
         .csrf(csrf -> csrf.disable())
-        .cors(Customizer.withDefaults()) // <- ATIVA O CORS AQUI
+        .cors(cors -> cors.configurationSource(corsConfigurationSource())) // ✅ ATIVA CORS corretamente
         .authorizeHttpRequests(auth -> auth
-    .requestMatchers(
-        "/auth/**",
-        "/v3/api-docs/**",
-        "/swagger-ui/**",
-        "/swagger-ui.html"
-    ).permitAll()
-    .anyRequest().authenticated()
-)
-
+            .requestMatchers(
+                "/auth/**",
+                "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html"
+            ).permitAll()
+            .anyRequest().authenticated()
+        )
         .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .build();
 }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost")); // origem do Vue
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
 
     @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                    .allowedOrigins("http://localhost")
-                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
-            }
-        };
-    }
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    //configuration.setAllowedOrigins(List.of("http://localhost:5173")); // ✅ porta certa do Vite
+    configuration.setAllowedOriginPatterns(List.of("*"));
+    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    configuration.setAllowedHeaders(List.of("*"));
+    configuration.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+}
+
+
+
+
 }

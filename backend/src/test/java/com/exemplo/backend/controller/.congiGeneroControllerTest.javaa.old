@@ -1,0 +1,241 @@
+// src/test/java/com/exemplo/backend/controller/GeneroControllerTest.java
+package com.exemplo.backend.controller;
+
+import com.exemplo.backend.auth.JwtUtil;
+import com.exemplo.backend.config.JwtFilter;
+import com.exemplo.backend.dto.GeneroDTO; // Importe o DTO real
+import com.exemplo.backend.dto.GeneroResponseDTO;
+import com.exemplo.backend.entity.Genero;
+import com.exemplo.backend.service.GeneroService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import static org.mockito.Mockito.mock;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+@WebMvcTest(GeneroController.class)
+public class GeneroControllerTest {
+
+    @MockBean
+    private JwtUtil jwtUtil;
+
+    @MockBean
+    private JwtFilter jwtFilter;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private GeneroService generoService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private Genero genero;
+    private GeneroDTO generoDTO;
+    private GeneroResponseDTO generoResponseDTO;
+
+    @BeforeEach
+    void setUp() {
+        genero = new Genero();
+        genero.setId(1L);
+        genero.setNome("Fantasia");
+
+        generoDTO = new GeneroDTO();
+        generoDTO.setNome("Fantasia");
+
+        generoResponseDTO = new GeneroResponseDTO(1L, "Fantasia");
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void deveRetornarGeneroQuandoExistir() throws Exception {
+        Mockito.when(generoService.buscarPorId(1L)).thenReturn(Optional.of(generoDTO));
+
+        mockMvc.perform(get("/api/v1/generos/{id}", 1L))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.nome").value("Fantasia"));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void deveRetornar404QuandoGeneroNaoExistir() throws Exception {
+        Mockito.when(generoService.buscarPorId(99L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/v1/generos/{id}", 99L))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void deveListarTodosOsGeneros() throws Exception {
+
+        List<GeneroDTO> generos = Arrays.asList(
+                generoDTO, // supondo que já declarou acima
+                new GeneroDTO(2L, "Ficção Científica")
+        );
+        Mockito.when(generoService.listarTodos()).thenReturn(generos);
+
+        mockMvc.perform(get("/api/v1/generos"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].nome").value("Fantasia"))
+                .andExpect(jsonPath("$[1].id").value(2L))
+                .andExpect(jsonPath("$[1].nome").value("Ficção Científica"));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void devePermitirCriarGeneroComoAdmin() throws Exception {
+        Genero generoParaSalvar = new Genero();
+        generoParaSalvar.setNome(generoDTO.getNome());
+
+        Genero generoSalvo = new Genero();
+        generoSalvo.setId(1L);
+        generoSalvo.setNome(generoDTO.getNome());
+
+        Mockito.when(generoService.salvar(any(Genero.class))).thenReturn(generoSalvo);
+
+        mockMvc.perform(post("/api/v1/generos")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(generoDTO)))
+                .andDo(print())
+                .andExpect(status().isCreated()) // Alterado para isCreated()
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.nome").value("Fantasia"));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void devePermitirAtualizarGeneroComoAdmin() throws Exception {
+        Long id = 1L;
+        GeneroDTO generoDTOAtualizado = new GeneroDTO(null, "Fantasia Proibida");
+        Genero generoAtualizado = new Genero(id, "Fantasia Proibida");
+
+        GeneroDTO generoDTO = new GeneroDTO(id, "Fantasia Proibida");
+        Mockito.when(generoService.buscarPorId(id)).thenReturn(Optional.of(generoDTO));
+
+        mockMvc.perform(put("/api/v1/generos/{id}", id)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(generoDTOAtualizado)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.nome").value("Fantasia Proibida"));
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void deveRetornar404AoAtualizarGeneroInexistenteComoAdmin() throws Exception {
+        Long id = 99L;
+        GeneroDTO generoDTOAtualizado = new GeneroDTO(null, "Genero Inexistente");
+
+        Mockito.when(generoService.buscarPorId(id)).thenReturn(Optional.empty());
+
+        mockMvc.perform(put("/api/v1/generos/{id}", id)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(generoDTOAtualizado)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void devePermitirDeletarGeneroComoAdmin() throws Exception {
+        Long id = 1L;
+        Mockito.when(generoService.buscarPorId(id)).thenReturn(Optional.of(generoDTO));
+        Mockito.doNothing().when(generoService).deletar(id);
+
+        mockMvc.perform(delete("/api/v1/generos/{id}", id)
+                .with(csrf())
+        )
+                .andDo(print())
+                .andExpect(status().isNoContent()); // Espera 204 No Content
+
+        Mockito.verify(generoService, Mockito.times(1)).deletar(id);
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    void deveRetornar404AoDeletarGeneroInexistenteComoAdmin() throws Exception {
+        Long id = 99L;
+        Mockito.when(generoService.buscarPorId(id)).thenReturn(Optional.empty());
+
+        mockMvc.perform(delete("/api/v1/generos/{id}", id)
+                .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+        Mockito.verify(generoService, Mockito.times(1)).buscarPorId(id);
+        Mockito.verify(generoService, Mockito.never()).deletar(any(Long.class));
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void deveNegarCriarGeneroComoUser() throws Exception {
+        mockMvc.perform(post("/api/v1/generos")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(generoDTO)))
+                .andDo(print())
+                .andExpect(status().isForbidden()); // Espera 403 Forbidden
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void deveNegarAtualizarGeneroComoUser() throws Exception {
+        Long id = 1L;
+        GeneroDTO generoDTO = new GeneroDTO(id, "Fantasia Proibida");
+
+        Mockito.when(generoService.buscarPorId(id)).thenReturn(Optional.of(generoDTO));
+
+        mockMvc.perform(put("/api/v1/generos/{id}", id)
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(generoDTO)))
+                .andDo(print())
+                .andExpect(status().isForbidden()); // Espera 403 Forbidden
+    }
+
+    @Test
+    @WithMockUser(roles = "USER")
+    void deveNegarDeletarGeneroComoUser() throws Exception {
+        Long id = 1L;
+        // Mock the service call to return an existing genre so security takes over
+        Mockito.when(generoService.buscarPorId(id)).thenReturn(Optional.of(generoDTO));
+
+        mockMvc.perform(delete("/api/v1/generos/{id}", id)
+                .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isForbidden()); // Espera 403 Forbidden
+
+        Mockito.verify(generoService, Mockito.times(1)).buscarPorId(id);
+        Mockito.verify(generoService, Mockito.never()).deletar(any(Long.class));
+    }
+}

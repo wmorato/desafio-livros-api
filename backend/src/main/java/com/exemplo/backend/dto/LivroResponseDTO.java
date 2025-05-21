@@ -5,6 +5,14 @@ public class LivroResponseDTO {
     public String titulo;
     public String autor;
     public String genero;
-    public Long autorId;    // <--- Adicione isso
-    public Long generoId;   // <--- E isso
+    public Long autorId;
+    public Long generoId;
+
+    // Add getters
+    public Long getId() { return id; }
+    public String getTitulo() { return titulo; }
+    public String getAutor() { return autor; }
+    public String getGenero() { return genero; }
+    public Long getAutorId() { return autorId; }
+    public Long getGeneroId() { return generoId; }
 }

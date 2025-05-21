@@ -1,31 +1,91 @@
+// src/main/java/com/exemplo/backend/controller/AutorController.java
 package com.exemplo.backend.controller;
 
+import java.util.List; // <-- Adicione esta importação
+import java.util.stream.Collectors; // <-- Adicione esta importação
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController; // Necessário para listarTodos, se converter para DTO
+
+import com.exemplo.backend.dto.AutorDTO;
+import com.exemplo.backend.dto.AutorResponseDTO;
 import com.exemplo.backend.entity.Autor;
 import com.exemplo.backend.service.AutorService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
-@RequestMapping("/autores")
+@RequestMapping("/api/v1/autores")
 public class AutorController {
 
     @Autowired
     private AutorService autorService;
 
-    @GetMapping
-    public List<Autor> listar() {
-        return autorService.listarTodos();
-    }
-
     @PostMapping
-    public Autor criar(@RequestBody Autor autor) {
-        return autorService.salvar(autor);
+    public ResponseEntity<AutorResponseDTO> criar(@RequestBody AutorDTO dto) { // <-- Recebe AutorDTO
+        Autor autor = new Autor();
+        autor.setNome(dto.getNome()); // Usa o getter do DTO
+
+        Autor autorSalvo = autorService.salvar(autor);
+
+        AutorResponseDTO response = new AutorResponseDTO();
+        response.setId(autorSalvo.getId());
+        response.setNome(autorSalvo.getNome());
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id) {
-        autorService.deletar(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<AutorResponseDTO> buscarPorId(@PathVariable Long id) {
+        return autorService.buscarPorId(id)
+                .map(autor -> {
+                    AutorResponseDTO response = new AutorResponseDTO();
+                    response.setId(autor.getId());
+                    response.setNome(autor.getNome());
+                    return ResponseEntity.ok(response);
+                })
+                .orElse(ResponseEntity.notFound().build()); // Importante para retornar 404
     }
+
+    @GetMapping
+    public ResponseEntity<List<AutorResponseDTO>> listarTodos() {
+        List<AutorResponseDTO> autoresDTO = autorService.listarTodos().stream()
+                .map(autor -> {
+                    AutorResponseDTO dto = new AutorResponseDTO();
+                    dto.setId(autor.getId());
+                    dto.setNome(autor.getNome());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(autoresDTO);
+    }
+
+    // Adicione os métodos de PUT e DELETE se houver
+
+    // Exemplo de PUT:
+    // @PutMapping("/{id}")
+    // public ResponseEntity<AutorResponseDTO> atualizar(@PathVariable Long id, @RequestBody AutorDTO dto) {
+    //     return autorService.buscarPorId(id)
+    //             .map(autorExistente -> {
+    //                 autorExistente.setNome(dto.getNome());
+    //                 Autor autorAtualizado = autorService.salvar(autorExistente);
+    //                 AutorResponseDTO response = new AutorResponseDTO(autorAtualizado.getId(), autorAtualizado.getNome());
+    //                 return ResponseEntity.ok(response);
+    //             })
+    //             .orElse(ResponseEntity.notFound().build());
+    // }
+
+    // Exemplo de DELETE:
+    // @DeleteMapping("/{id}")
+    // public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    //     if (autorService.buscarPorId(id).isPresent()) {
+    //         autorService.deletar(id);
+    //         return ResponseEntity.noContent().build();
+    //     }
+    //     return ResponseEntity.notFound().build();
+    // }
 }

@@ -99,3 +99,97 @@ linkedin.com/in/wilsonmorato
 
 ✅ Pode ser extendido com usuários reais e permissões por perfil
 
+
+📚 Projeto Livraria - Execução de Testes
+Este projeto segue as melhores práticas de separação de ambientes e testes com Spring Boot, permitindo fácil execução e manutenção em desenvolvimento, produção e testes automatizados.
+
+🚀 Como Executar os Testes Automatizados
+Pré-requisitos
+Java 17+ instalado
+
+Maven 3.8+ instalado
+
+(Opcional) Docker, se usar banco via container
+
+1. Estrutura de Arquivos de Ambiente
+O projeto possui arquivos separados para cada ambiente:
+
+application.yml (configuração base)
+
+application-dev.yml (desenvolvimento)
+
+application-prod.yml (produção)
+
+application-test.yml (testes automatizados)
+
+2. Rodando os Testes de Unidade
+Os testes usam por padrão o profile test, que configura o banco H2 em memória para execuções isoladas e rápidas.
+
+Com Maven Wrapper (recomendado)
+bash
+Copiar
+Editar
+./mvnw test -Dspring.profiles.active=test
+Ou com Maven global
+bash
+Copiar
+Editar
+mvn test -Dspring.profiles.active=test
+3. (Opcional) Rodando um teste específico
+bash
+Copiar
+Editar
+./mvnw -Dtest=LivroServiceTest test -Dspring.profiles.active=test
+4. Configuração do Banco de Dados para Testes
+O profile test usa banco H2 em memória, configurado em application-test.yml:
+
+yaml
+Copiar
+Editar
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+5. Resultados dos Testes
+Após rodar os testes, os resultados podem ser visualizados em:
+
+bash
+Copiar
+Editar
+target/surefire-reports/
+Ou diretamente no terminal, onde serão exibidos os testes executados, aprovados e falhas (se houver).
+
+6. Dicas rápidas
+Para rodar o backend em um ambiente específico, use:
+
+bash
+Copiar
+Editar
+./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+Para produção, use o profile prod (definido via variável de ambiente no deploy).
+
+7. Dúvidas ou problemas?
+Consulte os arquivos de configuração em src/main/resources/
+
+Verifique os logs para mensagens de erro detalhadas
+
+Se precisar de ajuda, abra uma issue ou entre em contato com o mantenedor do projeto
+
+🏆 Boas práticas
+Mantenha sempre os testes atualizados
+
+Execute os testes localmente antes de subir código para o repositório principal
+
+Use o profile de teste para garantir que os dados não afetam ambientes de desenvolvimento ou produção
+
+
+

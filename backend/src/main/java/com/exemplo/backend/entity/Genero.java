@@ -1,21 +1,11 @@
 package com.exemplo.backend.entity;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import jakarta.persistence.*;
-import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
-@Getter
-@Setter
-
-
-
-
 public class Genero {
 
     @Id
@@ -24,8 +14,30 @@ public class Genero {
 
     private String nome;
 
-    @OneToMany(mappedBy = "genero", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Livro> livros;
-
+    public Genero() {
     }
+
+    // Esse construtor é fundamental para os testes!
+    public Genero(Long id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
+    // getters e setters
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+}

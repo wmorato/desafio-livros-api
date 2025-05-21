@@ -5,68 +5,49 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.Mockito;
 import static org.mockito.Mockito.when;
-import org.mockito.MockitoAnnotations;
 
-import com.exemplo.backend.dto.GeneroDTO;
 import com.exemplo.backend.entity.Genero;
 import com.exemplo.backend.repository.GeneroRepository;
 
 class GeneroServiceTest {
 
-    @Mock
     private GeneroRepository generoRepository;
-
-    @InjectMocks
     private GeneroService generoService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        generoRepository = Mockito.mock(GeneroRepository.class);
+        generoService = new GeneroService(generoRepository);
     }
 
     @Test
     void testBuscarPorId_encontrado() {
-        Long id = 1L;
-        Genero genero = new Genero();
-        genero.setId(id);
-        genero.setNome("Genero Teste");
-
-        when(generoRepository.findById(id)).thenReturn(Optional.of(genero));
-
-        Optional<GeneroDTO> resultado = generoService.buscarPorId(id);
-
-        assertTrue(resultado.isPresent());
-        assertEquals("Genero Teste", resultado.get().getNome());
+        Genero genero = new Genero(1L, "Ficção");
+        when(generoRepository.findById(1L)).thenReturn(Optional.of(genero));
+        Optional<Genero> result = generoService.buscarPorId(1L);
+        assertTrue(result.isPresent());
+        assertEquals("Ficção", result.get().getNome());
     }
 
     @Test
     void testBuscarPorId_naoEncontrado() {
-        Long id = 2L;
-
-        when(generoRepository.findById(id)).thenReturn(Optional.empty());
-
-        Optional<GeneroDTO> resultado = generoService.buscarPorId(id);
-
-        assertFalse(resultado.isPresent());
+        when(generoRepository.findById(2L)).thenReturn(Optional.empty());
+        Optional<Genero> result = generoService.buscarPorId(2L);
+        assertTrue(result.isEmpty());
     }
 
     @Test
     void testListarTodos() {
-        Genero genero1 = new Genero(); genero1.setId(1L); genero1.setNome("Genero 1");
-        Genero genero2 = new Genero(); genero2.setId(2L); genero2.setNome("Genero 2");
-
+        Genero genero1 = new Genero(1L, "Aventura");
+        Genero genero2 = new Genero(2L, "Terror");
         when(generoRepository.findAll()).thenReturn(Arrays.asList(genero1, genero2));
-
-        List<GeneroDTO> resultado = generoService.listarTodos();
-
-        assertEquals(2, resultado.size());
-        assertEquals("Genero 1", resultado.get(0).getNome());
+        List<Genero> result = generoService.listarTodos();
+        assertEquals(2, result.size());
+        assertEquals("Aventura", result.get(0).getNome());
     }
 }

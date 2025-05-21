@@ -1,27 +1,19 @@
-// src/main/java/com/exemplo/backend/dto/GeneroResponseDTO.java
 package com.exemplo.backend.dto;
 
-// Importe Lombok se estiver usando (ex: @Getter, @Setter)
-// import lombok.Getter;
-// import lombok.Setter;
-
-// Se estiver usando Lombok
-// @Getter
-// @Setter
 public class GeneroResponseDTO {
-    public Long id;
-    public String nome;
+    private Long id;
+    private String nome;
 
     // Construtor padrão
     public GeneroResponseDTO() {}
 
-    // Construtor para facilitar testes (opcional)
+    // Construtor completo
     public GeneroResponseDTO(Long id, String nome) {
         this.id = id;
         this.nome = nome;
     }
 
-    // Getters e Setters (se não estiver usando Lombok)
+    // Getters e Setters
     public Long getId() {
         return id;
     }

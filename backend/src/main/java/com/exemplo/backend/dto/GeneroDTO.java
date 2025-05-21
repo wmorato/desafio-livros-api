@@ -4,13 +4,16 @@ public class GeneroDTO {
     private Long id;
     private String nome;
 
+    // Construtor padrão
     public GeneroDTO() {}
 
+    // Construtor completo
     public GeneroDTO(Long id, String nome) {
         this.id = id;
         this.nome = nome;
     }
 
+    // Getters e Setters
     public Long getId() {
         return id;
     }
@@ -26,14 +29,4 @@ public class GeneroDTO {
     public void setNome(String nome) {
         this.nome = nome;
     }
-
-    @Override
-    public String toString() {
-        return "GeneroDTO{" +
-                "id=" + id +
-                ", nome='" + nome + '\'' +
-                '}';
-    }
-
-    
 }

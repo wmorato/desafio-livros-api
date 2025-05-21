@@ -2,9 +2,9 @@ package com.exemplo.backend.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,51 +17,71 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.exemplo.backend.dto.GeneroDTO;
+import com.exemplo.backend.dto.GeneroResponseDTO;
+import com.exemplo.backend.entity.Genero;
 import com.exemplo.backend.service.GeneroService;
 
 @RestController
 @RequestMapping("/api/v1/generos")
 public class GeneroController {
 
+    private final GeneroService generoService;
+
     @Autowired
-    private GeneroService generoService;
+    public GeneroController(GeneroService generoService) {
+        this.generoService = generoService;
+    }
 
+    // Listar todos - Liberado para usuários autenticados
     @GetMapping
-    public ResponseEntity<List<GeneroDTO>> listarTodos() {
-        List<GeneroDTO> generos = generoService.listarTodos();
-        return ResponseEntity.ok(generos);
+    public List<GeneroResponseDTO> listarTodos() {
+        List<Genero> generos = generoService.listarTodos();
+        return generos.stream()
+                .map(g -> new GeneroResponseDTO(g.getId(), g.getNome()))
+                .collect(Collectors.toList());
     }
 
+    // Buscar por ID - Liberado para usuários autenticados
     @GetMapping("/{id}")
-    public ResponseEntity<GeneroDTO> buscarPorId(@PathVariable Long id) {
-        Optional<GeneroDTO> genero = generoService.buscarPorId(id);
-        return genero.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<GeneroResponseDTO> buscarPorId(@PathVariable Long id) {
+        Optional<Genero> generoOpt = generoService.buscarPorId(id);
+        return generoOpt
+                .map(g -> ResponseEntity.ok(new GeneroResponseDTO(g.getId(), g.getNome())))
+                .orElse(ResponseEntity.notFound().build());
     }
 
+    // Criar novo gênero - Apenas ADMIN
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<GeneroDTO> criar(@RequestBody GeneroDTO dto) {
-        GeneroDTO criado = generoService.criar(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(criado);
-
+    public ResponseEntity<GeneroResponseDTO> criar(@RequestBody GeneroDTO generoDTO) {
+        Genero genero = new Genero(generoDTO.getNome());
+        Genero salvo = generoService.salvar(genero);
+        return ResponseEntity.ok(new GeneroResponseDTO(salvo.getId(), salvo.getNome()));
     }
 
+    // Atualizar gênero - Apenas ADMIN
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
-    public ResponseEntity<GeneroDTO> atualizar(@PathVariable Long id, @RequestBody GeneroDTO dto) {
-        Optional<GeneroDTO> atualizado = generoService.atualizar(id, dto);
-        return atualizado.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<GeneroResponseDTO> atualizar(@PathVariable Long id, @RequestBody GeneroDTO generoDTO) {
+        Optional<Genero> generoOpt = generoService.buscarPorId(id);
+        if (generoOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Genero genero = generoOpt.get();
+        genero.setNome(generoDTO.getNome());
+        Genero atualizado = generoService.salvar(genero);
+        return ResponseEntity.ok(new GeneroResponseDTO(atualizado.getId(), atualizado.getNome()));
     }
 
-    @DeleteMapping("/{id}")
+    // Deletar gênero - Apenas ADMIN
     @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        if (!generoService.existe(id)) {
+        Optional<Genero> generoOpt = generoService.buscarPorId(id);
+        if (generoOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
         generoService.deletar(id);
-        return ResponseEntity.noContent().build(); // <--- Corrija aqui!
+        return ResponseEntity.noContent().build();
     }
 }

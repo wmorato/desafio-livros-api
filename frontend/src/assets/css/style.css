@@ -1,0 +1,14 @@
+@import './assets/css/reset.css';
+@import './assets/css/core.css';
+@import './assets/css/forms.css';
+@import './assets/css/tables.css';
+
+
+.erro {
+  color: red;
+  margin-bottom: 1em;
+}
+
+/* Outras regras globais aqui */
+
+

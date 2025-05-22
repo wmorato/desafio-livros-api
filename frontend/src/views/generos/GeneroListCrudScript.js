@@ -1,26 +1,30 @@
-// Recebe a lista de gêneros como prop do componente pai
-const props = defineProps({
-  generos: {
-    type: Array,
-    required: true
+import { ref, watch } from 'vue'
+
+export function useGeneroForm(props, emit) {
+  // Usa um ref local para edição sem alterar a prop diretamente
+  const generoLocal = ref({ ...props.genero })
+
+  // Sempre que a prop 'genero' mudar, atualiza o local
+  watch(
+    () => props.genero,
+    (novoGenero) => {
+      generoLocal.value = { ...novoGenero }
+    }
+  )
+
+  // Função para emitir o evento de salvar
+  function onSalvar() {
+    emit('salvar', { ...generoLocal.value })
   }
-})
 
-// Emite eventos para o pai (editar/excluir)
-const emit = defineEmits(['editar', 'excluir'])
+  // Função para cancelar
+  function onCancelar() {
+    emit('cancelar')
+  }
 
-// Função chamada ao clicar em Editar
-function onEditar(genero) {
-  emit('editar', genero)
-}
-
-// Função chamada ao clicar em Excluir
-function onExcluir(id) {
-  emit('excluir', id)
-}
-
-// Exporta as funções para o template
-export {
-  onEditar,
-  onExcluir
+  return {
+    generoLocal,
+    onSalvar,
+    onCancelar
+  }
 }

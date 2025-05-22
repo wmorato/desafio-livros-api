@@ -1,14 +1,173 @@
-@import './assets/css/reset.css';
-@import './assets/css/core.css';
-@import './assets/css/forms.css';
-@import './assets/css/tables.css';
-
+@import './reset.css';
+@import './core.css';
+@import './forms.css';
+@import './tables.css';
 
 .erro {
   color: red;
   margin-bottom: 1em;
 }
 
-/* Outras regras globais aqui */
+.home-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px #0001;
+  text-align: center;
+}
 
+.home-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.home-card {
+  display: inline-block;
+  padding: 1.2rem 2.4rem;
+  background: #f5f5f5;
+  border-radius: 10px;
+  font-weight: bold;
+  color: #444;
+  text-decoration: none;
+  box-shadow: 0 1px 5px #0001;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.home-card:hover {
+  background: #ffecb3;
+  color: #111;
+  box-shadow: 0 4px 20px #f7b50040;
+}
+
+/* Exemplo: style.css */
+
+.home-container {
+  max-width: 750px;
+  margin: 40px auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 16px #0001;
+  text-align: left;
+}
+
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logout-btn {
+  background: #fde8e8;
+  color: #d92d20;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6em 1.2em;
+  font-weight: bold;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.logout-btn:hover {
+  background: #faebea;
+  color: #a10b0b;
+}
+
+.cards-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-top: 2.5rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #0001;
+  padding: 1.7em 2.2em;
+  min-width: 230px;
+  flex: 1 1 260px;
+  text-decoration: none;
+  color: #222;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+  transition: box-shadow 0.18s, transform 0.18s;
+}
+.card:hover {
+  box-shadow: 0 6px 22px #d1e7fd70;
+  transform: translateY(-2px) scale(1.03);
+  background: #f8fafc;
+}
+.card small {
+  font-weight: normal;
+  color: #888;
+  margin-top: 0.3em;
+}
+
+.livros-lista-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 32px 24px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px 0 rgba(0,0,0,0.06);
+}
+.titulo-pagina {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+  letter-spacing: -1px;
+}
+.filtro-container {
+  text-align: right;
+  margin-bottom: 12px;
+}
+.input-filtro {
+  padding: 8px 14px;
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+.input-filtro:focus {
+  border-color: #3399ff;
+}
+.tabela-container {
+  overflow-x: auto;
+}
+.tabela-livros {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fafbfc;
+  font-size: 1rem;
+}
+.tabela-livros th, .tabela-livros td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.tabela-livros th {
+  background: #f1f3f8;
+  font-weight: 600;
+  color: #444;
+}
+.tabela-livros tr:hover {
+  background: #f4f8ff;
+  transition: background 0.2s;
+}
+.nenhum-livro {
+  text-align: center;
+  margin: 24px 0;
+  color: #888;
+  font-size: 1.1em;
+}
 

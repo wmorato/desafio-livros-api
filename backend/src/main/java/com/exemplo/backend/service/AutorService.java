@@ -1,12 +1,14 @@
 package com.exemplo.backend.service;
 
-import com.exemplo.backend.entity.Autor;
-import com.exemplo.backend.repository.AutorRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.exemplo.backend.dto.AutorDTO;
+import com.exemplo.backend.entity.Autor;
+import com.exemplo.backend.repository.AutorRepository;
 
 @Service
 public class AutorService {
@@ -26,7 +28,25 @@ public class AutorService {
         return autorRepository.save(autor);
     }
 
-    public void deletar(Long id) {
+    public boolean deletar(Long id) {
+    if (autorRepository.existsById(id)) {
         autorRepository.deleteById(id);
+        return true;
     }
+    return false;
+}
+
+
+    public Autor atualizar(Long id, AutorDTO autorDTO) {
+        Optional<Autor> optionalAutor = autorRepository.findById(id);
+        if (optionalAutor.isEmpty()) {
+            return null;
+        }
+        Autor autor = optionalAutor.get();
+        autor.setNome(autorDTO.getNome());
+        return autorRepository.save(autor);
+    }
+
+    
+
 }

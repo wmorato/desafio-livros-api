@@ -1,6 +1,6 @@
 // src/store/generoStore.js
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import api from '../services/api' 
 
 export const useGeneroStore = defineStore('genero', {
   state: () => ({
@@ -14,7 +14,7 @@ export const useGeneroStore = defineStore('genero', {
     async carregarGeneros() {
       this.loading = true
       try {
-        const resposta = await axios.get('/api/v1/generos')
+        const resposta = await api.get('/api/v1/generos')
         this.generos = resposta.data
       } catch (e) {
         this.error = e
@@ -26,7 +26,7 @@ export const useGeneroStore = defineStore('genero', {
     async adicionarGenero(genero) {
       this.loading = true
       try {
-        const resposta = await axios.post('/api/v1/generos', genero)
+        const resposta = await api.post('/api/v1/generos', genero)
         this.generos.push(resposta.data)
       } catch (e) {
         this.error = e
@@ -39,7 +39,7 @@ export const useGeneroStore = defineStore('genero', {
     async atualizarGenero(genero) {
       this.loading = true
       try {
-        const resposta = await axios.put(`/api/v1/generos/${genero.id}`, genero)
+        const resposta = await api.put(`/api/v1/generos/${genero.id}`, genero)
         // Atualiza o gênero na lista
         const idx = this.generos.findIndex(g => g.id === genero.id)
         if (idx !== -1) this.generos[idx] = resposta.data
@@ -54,7 +54,7 @@ export const useGeneroStore = defineStore('genero', {
     async removerGenero(id) {
       this.loading = true
       try {
-        await axios.delete(`/api/v1/generos/${id}`)
+        await api.delete(`/api/v1/generos/${id}`)
         this.generos = this.generos.filter(g => g.id !== id)
       } catch (e) {
         this.error = e

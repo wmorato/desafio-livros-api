@@ -1,9 +1,4 @@
 <template>
-  <!-- 
-    Formulário de criação/edição de Gênero.
-    Recebe o objeto 'genero' via prop (para edição ou novo).
-    Emite eventos para o componente pai (salvar/cancelar).
-  -->
   <form @submit.prevent="onSalvar">
     <label for="nomeGenero">Nome do gênero:</label>
     <input
@@ -19,9 +14,20 @@
 </template>
 
 <script setup>
-import {
+import { useGeneroForm } from './GeneroFormScript.js'
+
+// Pega as funções mágicas do Vue
+const props = defineProps({
+  genero: {
+    type: Object,
+    required: true
+  }
+})
+const emit = defineEmits(['salvar', 'cancelar'])
+
+const {
   generoLocal,
   onSalvar,
   onCancelar
-} from './GeneroFormScript.js'
+} = useGeneroForm(props, emit)
 </script>

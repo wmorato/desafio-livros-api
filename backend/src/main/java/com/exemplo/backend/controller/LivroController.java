@@ -65,7 +65,7 @@ public class LivroController {
         Autor autor = autorService.buscarPorId(dto.autorId)
                 .orElseThrow(() -> new RuntimeException("Autor não encontrado"));
 
-       Genero genero = generoService.buscarEntidadePorId(dto.generoId)
+       Genero genero = generoService.buscarPorId(dto.generoId)
             .orElseThrow(() -> new RuntimeException("Gênero não encontrado"));
 
 
@@ -108,7 +108,7 @@ public class LivroController {
         livro.setTitulo(dto.titulo);
 
         Optional<Autor> autor = autorService.buscarPorId(dto.autorId);
-        Optional<Genero> genero = generoService.buscarEntidadePorId(dto.generoId);
+        Optional<Genero> genero = generoService.buscarPorId(dto.generoId);
 
         autor.ifPresent(livro::setAutor);
         genero.ifPresent(livro::setGenero);

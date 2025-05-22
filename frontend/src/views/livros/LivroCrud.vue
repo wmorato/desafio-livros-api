@@ -1,61 +1,69 @@
 <template>
-  <div class="p-8 max-w-2xl mx-auto rounded-xl bg-white shadow">
-    <button @click="$router.push('/')" class="mb-6 px-4 py-2 rounded bg-gray-100 hover:bg-gray-200">← Voltar</button>
-    <h2 class="text-2xl font-bold mb-6 text-center">Gerenciar Livros</h2>
-    <div class="flex gap-4 justify-center mb-6">
-      <button @click="novoLivro" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-        Novo Livro
-      </button>
-      <button @click="gerenciarAutor" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-        Gerenciar Autor
-      </button>
-      <button @click="gerenciarGenero" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
-        Gerenciar Gênero
-      </button>
+  <div>
+    <div class="crud-nav">
+      <button @click="$router.push('/livros/crud')">Livros</button>
+      <button @click="$router.push('/autores/crud')" class="ativo">Autores</button>
+      <button @click="$router.push('/generos/crud')">Gêneros</button>
+      <button @click="$router.push('/')" class="btn-voltar">Voltar</button>
     </div>
-
-    <LivroListCrud :livros="livros" @editar="editarLivro" @remover="removerLivro" />
+    <h2>Gerenciamento de Autores</h2>
+    <form @submit.prevent="salvar">
+      <input v-model="autor.nome" placeholder="Nome do autor" required />
+      <button type="submit">{{ autor.id ? 'Salvar' : 'Incluir' }}</button>
+      <button type="button" @click="cancelar" v-if="autor.id">Cancelar</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nome</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="item in autores" :key="item.id">
+          <td>{{ item.id }}</td>
+          <td>{{ item.nome }}</td>
+          <td>
+            <button @click="editar(item)">Editar</button>
+            <button @click="excluir(item.id)">Excluir</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
-<script>
-import LivroListCrud from './LivroListCrud.vue';
-import api from '@/services/api';
+<script setup>
+import { ref, onMounted } from 'vue'
+import api from '../../services/api'
 
-export default {
-  name: 'LivroCrud',
-  components: { LivroListCrud },
-  data() {
-    return {
-      livros: []
-    }
-  },
-  mounted() {
-    this.buscarLivros();
-  },
-  methods: {
-    async buscarLivros() {
-      const response = await api.get('/livros');
-      this.livros = response.data;
-    },
-    novoLivro() {
-      this.$router.push('/livros/novo');
-    },
-    gerenciarAutor() {
-      this.$router.push('/autores/crud');
-    },
-    gerenciarGenero() {
-      this.$router.push('/generos/crud');
-    },
-    editarLivro(livro) {
-      this.$router.push(`/livros/editar/${livro.id}`);
-    },
-    async removerLivro(livroId) {
-      if (confirm('Tem certeza que deseja remover este livro?')) {
-        await api.delete(`/livros/${livroId}`);
-        this.buscarLivros();
-      }
-    }
+const autores = ref([])
+const autor = ref({ id: null, nome: '' })
+
+async function carregar() {
+  const res = await api.get('/api/v1/autores')
+  autores.value = res.data
+}
+onMounted(carregar)
+
+function editar(a) {
+  autor.value = { ...a }
+}
+function cancelar() {
+  autor.value = { id: null, nome: '' }
+}
+async function salvar() {
+  if (autor.value.id) {
+    await api.put(`/api/v1/autores/${autor.value.id}`, autor.value)
+  } else {
+    await api.post('/api/v1/autores', autor.value)
   }
+  cancelar()
+  carregar()
+}
+async function excluir(id) {
+  await api.delete(`/api/v1/autores/${id}`)
+  carregar()
 }
 </script>

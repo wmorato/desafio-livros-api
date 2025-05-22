@@ -1,18 +1,11 @@
 <template>
-  <!-- 
-    Componente de CRUD de Gêneros.
-    Toda a lógica está no script externo (GeneroCrudScript.js).
-    O CSS global já está aplicado pelo style.css.
-  -->
   <div>
     <h2>Gerenciamento de Gêneros</h2>
     <button @click="novoGenero">Novo Gênero</button>
 
-    <!-- Mensagens de carregamento e erro -->
     <div v-if="generoStore.loading">Carregando...</div>
     <div v-if="generoStore.error" class="erro">{{ generoStore.error }}</div>
 
-    <!-- Tabela de gêneros -->
     <table v-if="!generoStore.loading && generoStore.generos.length">
       <thead>
         <tr>
@@ -36,7 +29,6 @@
       <em>Nenhum gênero cadastrado.</em>
     </div>
 
-    <!-- Formulário de edição/adicionar -->
     <div v-if="generoStore.generoSelecionado">
       <h3>
         {{ generoStore.generoSelecionado.id ? 'Editar Gênero' : 'Novo Gênero' }}
@@ -54,18 +46,16 @@
   </div>
 </template>
 
-<!--
-  Importação do script externo.
-  O caminho pode ser relativo, conforme a estrutura do seu projeto.
--->
 <script setup>
-import {
-  generoStore,
+import { useGeneroStore } from '../../store/generoStore'
+import { setupGeneroCrud } from './GeneroCrudScript.js'
+
+const generoStore = useGeneroStore()
+const {
   novoGenero,
   editarGenero,
   salvarGenero,
   cancelarEdicao,
   excluirGenero
-} from './GeneroCrudScript.js'
+} = setupGeneroCrud(generoStore)
 </script>
-

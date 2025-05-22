@@ -2,14 +2,17 @@
 package com.exemplo.backend.controller;
 
 import java.util.List; // <-- Adicione esta importação
+import java.util.Optional;
 import java.util.stream.Collectors; // <-- Adicione esta importação
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController; // Necessário para listarTodos, se converter para DTO
@@ -64,28 +67,29 @@ public class AutorController {
         return ResponseEntity.ok(autoresDTO);
     }
 
-    // Adicione os métodos de PUT e DELETE se houver
+    @PutMapping("/{id}")
+    public ResponseEntity<AutorResponseDTO> atualizarAutor(
+            @PathVariable Long id,
+            @RequestBody AutorDTO autorDTO) {
+        Autor autorAtualizado = autorService.atualizar(id, autorDTO);
+        if (autorAtualizado == null) {
+            return ResponseEntity.notFound().build();
+        }
+        AutorResponseDTO dto = new AutorResponseDTO();
+        dto.setId(autorAtualizado.getId());
+        dto.setNome(autorAtualizado.getNome());
+        return ResponseEntity.ok(dto);
+    }
 
-    // Exemplo de PUT:
-    // @PutMapping("/{id}")
-    // public ResponseEntity<AutorResponseDTO> atualizar(@PathVariable Long id, @RequestBody AutorDTO dto) {
-    //     return autorService.buscarPorId(id)
-    //             .map(autorExistente -> {
-    //                 autorExistente.setNome(dto.getNome());
-    //                 Autor autorAtualizado = autorService.salvar(autorExistente);
-    //                 AutorResponseDTO response = new AutorResponseDTO(autorAtualizado.getId(), autorAtualizado.getNome());
-    //                 return ResponseEntity.ok(response);
-    //             })
-    //             .orElse(ResponseEntity.notFound().build());
-    // }
+    @DeleteMapping("/{id}")
+public ResponseEntity<Void> deletarAutor(@PathVariable Long id) {
+    boolean removido = autorService.deletar(id);
+    if (removido) {
+        return ResponseEntity.noContent().build();
+    } else {
+        return ResponseEntity.notFound().build();
+    }
+}
 
-    // Exemplo de DELETE:
-    // @DeleteMapping("/{id}")
-    // public ResponseEntity<Void> deletar(@PathVariable Long id) {
-    //     if (autorService.buscarPorId(id).isPresent()) {
-    //         autorService.deletar(id);
-    //         return ResponseEntity.noContent().build();
-    //     }
-    //     return ResponseEntity.notFound().build();
-    // }
+
 }

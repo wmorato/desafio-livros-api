@@ -17,8 +17,8 @@ export function useLogin() {
   }
 
   async function loginAsLeitor() {
-    username.value = 'leitor'
-    password.value = 'leitor'
+    username.value = 'user'
+    password.value = '123456'
     await onLogin()
   }
 

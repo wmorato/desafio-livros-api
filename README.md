@@ -15,8 +15,11 @@ Sistema completo de gerenciamento de livros, autores e gêneros com autenticaç�
 
 desafio-livros-api/
 ├── backend/ # API Java Spring Boot + JWT + Swagger + PostgreSQL
+
 ├── frontend/ # SPA Vue 3 + Pinia + Tailwind + Jest
+
 ├── docker/ # Arquivos de inicialização Docker (banco, configs)
+
 ├── docker-compose.yaml
 
 

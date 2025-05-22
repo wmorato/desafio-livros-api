@@ -14,6 +14,10 @@ import AutorForm from '../views/autores/AutorForm.vue'
 
 import GeneroCrud from '../views/generos/GeneroCrud.vue'
 import GeneroForm from '../views/generos/GeneroForm.vue'
+import SugestaoModal from "@/components/SugestaoModal.vue";
+
+
+
 
 const routes = [
   { path: '/', component: Home },
@@ -35,6 +39,10 @@ const routes = [
   { path: '/generos/crud', component: GeneroCrud },
   { path: '/generos/novo', component: GeneroForm },
   { path: '/generos/editar/:id', component: GeneroForm, props: true },
+
+  { path: '/generos/editar/:id', component: GeneroForm },
+
+  { path: '/sugestao', name: 'Sugestao', component: SugestaoModal }
   
 ]
 

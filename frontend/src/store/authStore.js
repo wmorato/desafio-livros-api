@@ -1,6 +1,6 @@
 // src/store/authStore.js
 import { defineStore } from "pinia";
-import api from "../services/api"; // ajuste o caminho conforme seu projeto, pode ser './api' se estiver na mesma pasta
+import api from "../services/api"; // ajuste o caminho conforme seu projeto
 
 export const useAuthStore = defineStore("auth", {
   state: () => ({
@@ -17,18 +17,12 @@ export const useAuthStore = defineStore("auth", {
         const res = await api.post("/auth/login", { username, password });
         this.token = res.data.token;
         this.user = res.data.user;
-        // Salva o token
-        localStorage.setItem("token", this.token);
-        // Salva o usuário
-        localStorage.setItem("user", JSON.stringify(this.user));
         api.defaults.headers.common["Authorization"] = `Bearer ${this.token}`;
         return true;
       } catch (e) {
         this.error = "Usuário ou senha inválidos";
         this.token = null;
         this.user = null;
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
         return false;
       } finally {
         this.loading = false;
@@ -37,8 +31,8 @@ export const useAuthStore = defineStore("auth", {
     logout() {
       this.user = null;
       this.token = null;
-      localStorage.removeItem("token");
       delete api.defaults.headers.common["Authorization"];
     },
   },
+  persist: true, // <-- Garante persistência via Pinia
 });

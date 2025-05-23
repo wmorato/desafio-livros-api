@@ -1,24 +1,22 @@
-import axios from 'axios';
-
-
-
+import axios from 'axios'
+import { useAuthStore } from '@/store/authStore'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-});
+})
 
-api.interceptors.request.use((config) => {
-  // Logs de debug, só para testes:
-  console.log('baseURL ', config.baseURL);
-  console.log('VITE_API_BASE_URL ', import.meta.env.VITE_API_BASE_URL);
+// Adicione o interceptor DENTRO de uma função
+export function setAuthInterceptor() {
+  api.interceptors.request.use((config) => {
+    const authStore = useAuthStore()
+    const token = authStore.token
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
+    return config
+  }, (error) => {
+    return Promise.reject(error)
+  })
+}
 
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
-
-export default api;
+export default api

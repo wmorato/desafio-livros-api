@@ -31,13 +31,17 @@
 
 <script>
 import SugestaoModal from "@/components/SugestaoModal.vue";
+import { useAuthStore } from '@/store/authStore'
+
+
 export default {
   abrirSugestao() {
     this.modalSugestao = true;
   },
   logout() {
     // Ajuste conforme sua lógica de logout:
-    localStorage.clear();
+    const authStore = useAuthStore()
+    authStore.logout()
     this.$router.push("/login"); // ou a rota de login do seu sistema
   },
   components: { SugestaoModal },
@@ -46,18 +50,13 @@ export default {
       modalSugestao: false
     }
   },
-  methods: {
-    abrirSugestao() {
-      this.modalSugestao = true;
-    },
+  methods: {    
     abrirSugestao() {
       this.modalSugestao = true;
     },
     logout() {
-      // Limpa o localStorage ou sessionStorage conforme seu uso
-      localStorage.removeItem('token'); // ou 
-      localStorage.clear();
-      // Redireciona para login (ajuste para sua rota de login)
+      const authStore = useAuthStore()
+      authStore.logout()
       this.$router.push('/login');
     }
   }

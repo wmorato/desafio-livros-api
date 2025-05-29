@@ -1,10 +1,10 @@
 # 📚 Desafio Livros API
 
-Sistema completo de gerenciamento de livros, autores e gêneros com autenticação JWT, interface web moderna (Vue 3) e backend Spring Boot. Integração Docker para fácil setup. Desenvolvido como desafio técnico full stack.
+Sistema completo de gerenciamento de livros, autores e gêneros com autenticação JWT, interface web moderna (Vue 3) e backend Spring Boot. Integração via Docker para setup rápido e eficiente.
 
 ---
 
-## ✨ Demonstração
+## ✨ Demonstração Visual
 
 ![Tela de Login](./screenshots/login.png)
 ![Gerenciamento de Livros](./screenshots/livros-crud.png)
@@ -13,210 +13,233 @@ Sistema completo de gerenciamento de livros, autores e gêneros com autenticaç�
 
 ## 📂 Estrutura do Projeto
 
+```
 desafio-livros-api/
-├── backend/ # API Java Spring Boot + JWT + Swagger + PostgreSQL
-
-├── frontend/ # SPA Vue 3 + Pinia + Tailwind + Jest
-
-├── docker/ # Arquivos de inicialização Docker (banco, configs)
-
+├── backend/         # API Java Spring Boot + JWT + Swagger + PostgreSQL
+├── frontend/        # SPA Vue 3 + Pinia + Tailwind + Jest + Playwright
+├── docker/          # Arquivos de inicialização Docker (banco, configs)
 ├── docker-compose.yaml
-
-
+```
 
 ---
 
-## 🚀 Como rodar o projeto (usando Docker)
+## 🚀 Como rodar o projeto (via Docker)
 
-**Pré-requisitos:**  
-- [Docker](https://www.docker.com/) e [Docker Compose](https://docs.docker.com/compose/) instalados
+### Requisitos:
+
+* [Docker](https://www.docker.com/)
+* [Docker Compose](https://docs.docker.com/compose/)
 
 ```sh
 git clone https://github.com/wmorato/desafio-livros-api.git
 cd desafio-livros-api
 docker-compose up --build
+```
 
-
+* Frontend via Docker: [http://localhost/](http://localhost/)
+* Frontend localmente: [http://localhost:5173](http://localhost:5173)
+* API/Swagger: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 
 ---
 
-## 🚀 Como rodar o projeto (usando Docker)
+## 🧑‍💻 Usuários de Teste
 
-**Pré-requisitos:**  
-- [Docker](https://www.docker.com/) e [Docker Compose](https://docs.docker.com/compose/) instalados
+| Usuário | Senha  | Perfil      |
+| ------- | ------ | ----------- |
+| admin   | 123456 | ROLE\_ADMIN |
+| user    | 123456 | ROLE\_USER  |
 
-```sh
-git clone https://github.com/wmorato/desafio-livros-api.git
-cd desafio-livros-api
-docker-compose up --build```
+---
 
-Front via Docker
-http://localhost/
+## 📖 Funcionalidades Principais
 
-front npm run dev
-Acesse o frontend: http://localhost:5173
+* Autenticação JWT (login, expiração, proteção de rotas)
+* CRUD completo: livros, autores e gêneros
+* Filtros por autor/gênero + busca dinâmica
+* Layout responsivo (dark/light), usabilidade moderna
+* Documentação completa com Swagger
+* Testes automatizados: backend (JUnit), frontend (Jest e Playwright)
+* Geração automática de relatório com prints
+* Docker Compose para integração total
+* Estrutura pronta para CI/CD
 
-API/Swagger: http://localhost:8080/swagger-ui/index.html
+---
 
-🧑‍💻 Usuários de Teste
-Usuário	Senha	Perfil
-admin	123456	ROLE_ADMIN
-user	123456	ROLE_USER
+## 🛠️ Tecnologias Utilizadas
 
-📖 Principais Funcionalidades
-Autenticação JWT: login, proteção de rotas, expiração.
+### Backend
 
-CRUD Completo: livros, autores e gêneros.
+* Java 17, Spring Boot 3.4
+* Spring Data JPA, Spring Security (JWT), Validation
+* Swagger (springdoc-openapi), Actuator
+* PostgreSQL
+* JUnit, Mockito
 
-Filtros e Pesquisa: filtro por autor/gênero, busca dinâmica.
+### Frontend
 
-Interface Responsiva: layout corporativo, dark/light, UX moderna.
+* Vue 3 + Vite
+* Pinia (state management)
+* Axios (API)
+* Tailwind CSS + CSS customizado
+* Jest (@vue/test-utils)
+* Playwright (teste funcional e visual)
 
-Swagger/OpenAPI: documentação e teste dos endpoints.
+---
 
-Testes automatizados: backend (JUnit), frontend (Jest).
+## 🏗️ Comandos Úteis
 
-Docker Compose: frontend, backend e banco integrados.
+### Backend
 
-CI-ready: fácil extensão para deploy e pipelines.
-
-🛠️ Tecnologias Utilizadas
-Backend
-Java 17, Spring Boot 3.4
-
-Spring Data JPA, Spring Security (JWT), Validation, Actuator
-
-Swagger (springdoc-openapi)
-
-PostgreSQL
-
-Testes: JUnit, Mockito
-
-Frontend
-Vue 3 + Vite
-
-Pinia (state management)
-
-Axios (API)
-
-Tailwind CSS + custom CSS
-
-Jest (@vue/test-utils)
-
-Docker
-
-🏗️ Comandos Úteis
-Backend
-
+```bash
 cd backend
-./mvnw test        # Executa todos os testes JUnit
-./mvnw spring-boot:run # Sobe API sem Docker (porta 8080)
+./mvnw test                # Executa testes JUnit
+./mvnw spring-boot:run     # Sobe API local (porta 8080)
+```
 
+### Frontend
 
-Frontend
-
+```bash
 cd frontend
-npm install        # Instala dependências
-npm run dev        # Sobe SPA localmente (porta 5173)
-npm run build      # Gera build de produção
-npm test           # Executa testes unitários (Jest)
+npm install                # Instala dependências
+npm run dev                # Inicia frontend local (porta 5173)
+npm run build              # Build de produção
+npm test                   # Executa testes unitários (Jest)
+```
 
+### Docker
 
-Docker
+```bash
+docker-compose up --build   # Sobe frontend, backend e banco
+docker-compose down         # Para os containers
+```
 
-docker-compose up --build   # Sobe tudo (frontend, backend, banco)
-docker-compose down         # Para todos os containers
+### Testes Funcionais (Playwright)
 
+#### Geração de relatório automatizado com screenshots
 
-🌐 Documentação da API
-Acesse o Swagger:
-http://localhost:8080/swagger-ui/index.html
+```bash
+node frontend/tests/e2e/generate-report.js
+```
 
+#### Executar testes com navegador visível (modo headed)
 
-🧪 Executando os Testes
+```bash
+npx playwright test frontend/tests/e2e --headed
+```
 
-Backend (JUnit):
+#### Executar teste pontual (exemplo: home.spec.ts)
 
+```bash
+npx playwright test frontend/tests/e2e/home.spec.ts --headed
+```
+
+#### Outros testes:
+
+```bash
+npx playwright test frontend/tests/e2e/livro-list.spec.ts --headed  # Pesquisar livro
+npx playwright test frontend/tests/e2e/home.spec.ts --headed        # Navegar no menu
+```
+
+#### Executar todos os testes no modo headless (sem navegador)
+
+```bash
+npx playwright test frontend/tests/e2e
+```
+
+---
+
+## 🌐 Documentação da API
+
+Acesse via Swagger UI:
+[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+---
+
+## 🚪 Executando os Testes
+
+### Backend (JUnit)
+
+```bash
 cd backend
 ./mvnw test
+```
 
+### Frontend (Jest)
 
-Frontend (Jest):
-
+```bash
 cd frontend
 npm test
+```
 
-cd frontend
-npm test
+---
 
- Organização dos Arquivos
-Backend
-src/main/java/com/exemplo/backend/...
+## 📁 Estrutura de Código
 
-controller/, service/, entity/, dto/, repository/
+### Backend
 
-src/test/java/com/exemplo/backend/...
-
-Testes separados por camada (controller, service)
-
+```
+src/main/java/com/exemplo/backend/
+├── controller/
+├── service/
+├── entity/
+├── dto/
+├── repository/
+src/test/java/com/exemplo/backend/
 pom.xml, Dockerfile
+```
 
-Frontend
-src/assets/css/ - Estilos customizados (incluindo Tailwind)
+### Frontend
 
-src/views/ - Páginas principais (CRUD, login)
-
-src/components/ - Componentes reutilizáveis
-
-src/store/ - Pinia stores
-
+```
+src/assets/css/      # Estilos customizados + Tailwind
+src/views/           # Páginas (CRUD, login)
+src/components/      # Componentes reutilizáveis
+src/store/           # Pinia store
+frontend/tests/e2e/  # Testes Playwright funcionais e visuais
 Dockerfile, jest.config.mjs, .babelrc, package.json
+```
 
-🏅 Diferenciais
-Autenticação JWT corporativa pronta para produção
+---
 
-Layout profissional, usabilidade de alto nível
+## 🏅 Diferenciais
 
-Cobertura de testes nas duas camadas
+* JWT corporativo pronto para produção
+* Layout responsivo de alto padrão
+* Testes automatizados no front e back (inclui testes funcionais visuais)
+* Integração simplificada via Docker
+* Código limpo, organizado e pronto para escalar
 
-Setup rápido com Docker (basta um comando)
+---
 
-Código limpo e organizado para fácil manutenção
+## ❓ FAQ & Dicas
 
+<details>
+  <summary><b>Clique para expandir</b></summary>
 
- <details> <summary><b>FAQ & Dicas</b></summary>
-Se o frontend não conectar ao backend, confira as portas e variáveis de ambiente.
+* Verifique as portas se o frontend não conectar ao backend
+* O banco é criado automaticamente na primeira execução
+* Usuários admin e user já estão cadastrados
 
-O banco de dados é criado automaticamente no primeiro start.
+</details>
 
-Usuários admin e user já vêm populados.
+---
 
-</details> 
+## 📆 Populando o Banco Manualmente (opcional)
 
-
-BANCO DE DADOS
-
-Caso precise popular manualmente as tabelas, rode no seu client SQL (ou no psql/DBeaver/pgAdmin):
-
+```sql
 INSERT INTO autor (nome) VALUES ('Machado de Assis');
 INSERT INTO genero (nome) VALUES ('Romance');
 INSERT INTO livro (titulo, autor_id, genero_id) VALUES ('Dom Casmurro', 1, 1);
+```
 
+> Certifique-se de que os IDs 1 existem. Rode `SELECT * FROM autor;` e `SELECT * FROM genero;` para validar.
 
-⚠️ Atenção:
+---
 
-Certifique-se de que o ID do autor e do gênero realmente são 1.
+## 💼 Sobre o Desafio
 
-Você pode rodar SELECT * FROM autor; ou SELECT * FROM genero; para conferir.
+Projeto desenvolvido para avaliação técnica.
 
-(Troque postgres-db pelo nome do seu container.)
+Repositório: [https://github.com/wmorato/desafio-livros-api](https://github.com/wmorato/desafio-livros-api)
 
-
-💼 Sobre o desafio
-Este projeto foi desenvolvido para o processo seletivo conforme instruções recebidas.
-
-Repositório:
-https://github.com/wmorato/desafio-livros-api
-
-📞 Contato
-Wilson Morato
+Contato: **Wilson Morato**

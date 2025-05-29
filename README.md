@@ -50,7 +50,10 @@ git clone https://github.com/wmorato/desafio-livros-api.git
 cd desafio-livros-api
 docker-compose up --build```
 
+Front via Docker
+http://localhost/
 
+front npm run dev
 Acesse o frontend: http://localhost:5173
 
 API/Swagger: http://localhost:8080/swagger-ui/index.html

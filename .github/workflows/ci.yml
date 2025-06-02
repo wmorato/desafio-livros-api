@@ -47,41 +47,41 @@ jobs:
 
       - name: Rodar testes unitários (Jest)
         run: npm test
-  
+
   integration-tests:
-  name: Testes Funcionais (Playwright)
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v4
+    name: Testes Funcionais (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: "20"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
 
-    - name: Instalar dependências do frontend
-      working-directory: ./frontend
-      run: npm ci
+      - name: Instalar dependências do frontend
+        working-directory: ./frontend
+        run: npm ci
 
-    - name: Testar se a API backend está disponível
-      id: checkapi
-      run: |
-        API_URL="http://localhost:8080/actuator/health"
-        for i in {1..10}; do
-          echo "Tentando conectar à API... ($i/10)"
-          curl --fail $API_URL && exit 0
-          sleep 5
-        done
-        echo "API não está disponível após aguardar. Pulando testes E2E."
-        touch skip_playwright.txt
-        exit 0
-
-    - name: Rodar testes E2E/integração (Playwright)
-      working-directory: ./frontend
-      run: |
-        if [ -f ../skip_playwright.txt ]; then
-          echo "Ambiente não disponível, pulando testes Playwright."
+      - name: Testar se a API backend está disponível
+        id: checkapi
+        run: |
+          API_URL="http://localhost:8080/actuator/health"
+          for i in {1..10}; do
+            echo "Tentando conectar à API... ($i/10)"
+            curl --fail $API_URL && exit 0
+            sleep 5
+          done
+          echo "API não está disponível após aguardar. Pulando testes E2E."
+          touch skip_playwright.txt
           exit 0
-        else
-          npx playwright test
-        fi
+
+      - name: Rodar testes E2E/integração (Playwright)
+        working-directory: ./frontend
+        run: |
+          if [ -f ../skip_playwright.txt ]; then
+            echo "Ambiente não disponível, pulando testes Playwright."
+            exit 0
+          else
+            npx playwright test
+          fi

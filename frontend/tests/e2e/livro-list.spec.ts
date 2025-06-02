@@ -38,5 +38,5 @@ test('pesquisa livro 888 e espera encontrar "Wilson Morato"', async ({ page }) =
   await page.screenshot({ path: `${screenshotsDir}/step6-wilson-morato.png` })
 
   // 8. Pausa para inspeção manual (opcional)
-  await page.pause()
+  //await page.pause()
 })

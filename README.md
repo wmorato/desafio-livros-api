@@ -33,7 +33,7 @@ desafio-livros-api/
 ```sh
 git clone https://github.com/wmorato/desafio-livros-api.git
 cd desafio-livros-api
-docker-compose up --build
+docker compose up --build
 ```
 
 * Frontend via Docker: [http://localhost/](http://localhost/)
@@ -109,8 +109,8 @@ npm test                   # Executa testes unitários (Jest)
 ### Docker
 
 ```bash
-docker-compose up --build   # Sobe frontend, backend e banco
-docker-compose down         # Para os containers
+docker compose up --build   # Sobe frontend, backend e banco
+docker compose down         # Para os containers
 ```
 
 ### Testes Funcionais (Playwright)

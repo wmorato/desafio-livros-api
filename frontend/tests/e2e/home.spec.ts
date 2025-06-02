@@ -27,5 +27,5 @@ test('navega para Consultar Livros após login', async ({ page }) => {
 
   // Pausa para inspeção manual
   console.log('8. Pausando para inspeção manual...')
-  await page.pause()
+  //await page.pause()
 })

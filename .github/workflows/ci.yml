@@ -66,7 +66,7 @@ jobs:
       - name: Testar se a API backend está disponível
         id: checkapi
         run: |
-          API_URL="http://localhost:8080/actuator/health"
+          API_URL="http://localhost:5432/actuator/health"
           for i in {1..10}; do
             echo "Tentando conectar à API... ($i/10)"
             curl --fail $API_URL && exit 0

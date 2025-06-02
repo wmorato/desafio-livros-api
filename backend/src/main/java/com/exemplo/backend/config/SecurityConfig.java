@@ -66,7 +66,15 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/login", "/auth/leitor", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers(
+                        "/auth/login",
+                        "/auth/leitor",
+                        "/v3/api-docs/**",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/actuator/health", 
+                        "/actuator/info" 
+                ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/livros", "/api/v1/livros/").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/autores", "/api/v1/generos").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/generos").hasRole("ADMIN")
@@ -77,7 +85,7 @@ public class SecurityConfig {
                 );
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        
+
         return http.build();
     }
 

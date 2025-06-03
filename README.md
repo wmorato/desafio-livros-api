@@ -236,6 +236,52 @@ INSERT INTO livro (titulo, autor_id, genero_id) VALUES ('Dom Casmurro', 1, 1);
 
 ---
 
+---
+
+## 🚦 Integração Contínua (CI) – GitHub Actions
+
+O projeto utiliza **GitHub Actions** para rodar testes automatizados a cada push/pull request na branch `main`, garantindo qualidade contínua em todas as entregas.
+
+### **Workflows Automatizados**
+
+- **Testes Backend (JUnit):** Executa os testes unitários do backend (Java/Spring) automaticamente.
+- **Testes Frontend (Jest):** Executa os testes unitários dos componentes Vue.
+- **Testes Funcionais/E2E (Playwright):** Roda testes automatizados ponta a ponta no frontend, garantindo a integração entre frontend e backend.
+
+#### **Arquivo do workflow**
+`.github/workflows/ci.yml`
+
+#### **Como funciona**
+
+A cada push ou pull request na branch `main`:
+
+1. **Backend**  
+   - Instala o JDK 17  
+   - Executa `./mvnw test` (JUnit)
+
+2. **Frontend**  
+   - Instala o Node.js 20  
+   - Executa `npm ci` para instalar dependências  
+   - Executa `npm test` (Jest)
+
+3. **Integração/E2E**  
+   - Instala dependências do frontend  
+   - Verifica se a API backend está disponível (`/actuator/health`)  
+   - Executa `npx playwright test` para rodar testes E2E (Playwright)
+
+Os resultados podem ser visualizados em [Actions do GitHub](https://github.com/wmorato/desafio-livros-api/actions).
+
+---
+
+## 📋 Exemplo de saída do workflow
+
+- ✅ Testes Backend passaram
+- ✅ Testes Frontend passaram
+- ✅ Testes Funcionais passaram (ou skip caso a API não esteja disponível)
+
+---
+
+
 ## 💼 Sobre o Desafio
 
 Projeto desenvolvido para avaliação técnica.

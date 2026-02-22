@@ -1,15 +1,6 @@
 // src/main/java/com/exemplo/backend/dto/AutorDTO.java
 package com.exemplo.backend.dto;
 
-// Importe as anotações de validação se você as estiver usando (ex: @NotBlank)
-// import jakarta.validation.constraints.NotBlank;
-// Importe Lombok se estiver usando (ex: @Getter, @Setter)
-// import lombok.Getter;
-// import lombok.Setter;
-
-// Se estiver usando Lombok
-// @Getter
-// @Setter
 public class AutorDTO {
     // @NotBlank(message = "O nome do autor é obrigatório") // Exemplo de validação
     public String nome;

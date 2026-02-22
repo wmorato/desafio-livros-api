@@ -7,6 +7,6 @@ import com.exemplo.backend.entity.Genero;
 
 @Repository
 public interface GeneroRepository extends JpaRepository<Genero, Long> {
-    // Você pode adicionar métodos de consulta customizados aqui, se necessário
+    
     boolean existsByNome(String nome);
 }

@@ -1,13 +1,7 @@
 // src/main/java/com/exemplo/backend/dto/AutorResponseDTO.java
 package com.exemplo.backend.dto;
 
-// Importe Lombok se estiver usando (ex: @Getter, @Setter)
-// import lombok.Getter;
-// import lombok.Setter;
 
-// Se estiver usando Lombok
-// @Getter
-// @Setter
 public class AutorResponseDTO {
     public Long id;
     public String nome;
